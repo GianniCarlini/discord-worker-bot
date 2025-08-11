@@ -1,7 +1,17 @@
 name = "discord-worker-bot"
 main = "dist/index.js"
 compatibility_date = "2025-08-10"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
 [vars]
-AMADEUS_BASE_URL = "https://api.amadeus.com" # o https://test.api.amadeus.com
-AM_ORIGIN = "SCL"     # Santiago
-AM_CURRENCY = "CLP"   # moneda para mostrar
+AMADEUS_BASE_URL = "https://api.amadeus.com"  # o "https://test.api.amadeus.com" para sandbox
+AM_ORIGIN = "SCL"
+AM_CURRENCY = "CLP"
+AM_DEST_TOKYO = "TYO"
+AM_DEST_OSAKA = "OSA"
+
+[[kv_namespaces]]
+binding = "STATE"
+id = "84ff82d3bfc641b7af41a83aec91c52d"

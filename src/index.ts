@@ -1,15 +1,16 @@
 import { verifyKey, InteractionType, InteractionResponseType } from 'discord-interactions';
-import type { ExportedHandler, Request as CfRequest } from '@cloudflare/workers-types';
 
-const PUBLIC_KEY = process.env.DISCORD_PUBLIC_KEY!;
-
-async function readBody(request: CfRequest): Promise<ArrayBuffer> {
+async function readBody(request: Request): Promise<ArrayBuffer> {
   return await request.arrayBuffer();
 }
 
 export default {
-  async fetch(request: CfRequest): Promise<Response> {
-    if (request.method !== 'POST') return new Response('Method Not Allowed', { status: 405 });
+  async fetch(request: Request, env: any): Promise<Response> {
+    if (request.method !== 'POST') {
+      return new Response('Method Not Allowed', { status: 405 });
+    }
+
+    const PUBLIC_KEY = env.DISCORD_PUBLIC_KEY as string;
 
     const signature = request.headers.get('x-signature-ed25519');
     const timestamp = request.headers.get('x-signature-timestamp');
@@ -22,10 +23,11 @@ export default {
       PUBLIC_KEY
     );
 
-    if (!isValid) return new Response('bad signature', { status: 401 });
+    if (!isValid) {
+      return new Response('bad signature', { status: 401 });
+    }
 
     const json = JSON.parse(new TextDecoder().decode(body));
-
 
     if (json.type === InteractionType.PING) {
       return Response.json({ type: InteractionResponseType.PONG });
@@ -34,10 +36,10 @@ export default {
     if (json.data?.name === 'ping') {
       return Response.json({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: { content: 'Pong! 🏓 (from Cloudflare Workers)' }
+        data: { content: 'Pong! 🏓 (from Cloudflare Workers)' },
       });
     }
 
     return new Response('', { status: 200 });
   }
-} satisfies ExportedHandler<Env>;
+};

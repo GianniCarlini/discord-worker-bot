@@ -1,3 +1,7 @@
 name = "discord-worker-bot"
 main = "dist/index.js"
 compatibility_date = "2025-08-10"
+[vars]
+AMADEUS_BASE_URL = "https://api.amadeus.com" # o https://test.api.amadeus.com
+AM_ORIGIN = "SCL"     # Santiago
+AM_CURRENCY = "CLP"   # moneda para mostrar
